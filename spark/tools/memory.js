@@ -6,10 +6,10 @@
  * SQLite-backed memory module for the Spark skill.
  * Compiled to spark/tools/memory via: bun build --compile
  *
- * Database: spark/memory.db (relative to the project root / cwd)
+ * Database: spark/memory.db (relative to this script file — cwd-independent)
  *
- * CLI usage (compiled binary):
- *   ./spark/tools/memory loadProfile
+ * CLI usage:
+ *   bun spark/tools/memory.js loadProfile
  *   ./spark/tools/memory saveProfile '<json>'
  *   ./spark/tools/memory loadIdeas
  *   ./spark/tools/memory searchIdeas <keyword>
@@ -22,9 +22,9 @@
 const { Database } = require('bun:sqlite');
 const path = require('node:path');
 
-// DB lives at spark/memory.db relative to the project root (cwd).
-// SKILL.md requires all commands to be run from the project root.
-const DB_PATH = path.join(process.cwd(), 'spark', 'memory.db');
+// DB lives at spark/memory.db — resolved relative to this script file,
+// so it works regardless of the working directory the agent uses.
+const DB_PATH = path.join(__dirname, '..', 'memory.db');
 
 let _db = null;
 
