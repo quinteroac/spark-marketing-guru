@@ -21,21 +21,41 @@ Use this skill when the user runs `/spark` or asks for utility ideas to sell on 
 ## Memory
 
 - Database: `spark/memory.db` (created automatically on first run — no setup needed)
-- Binaries: `spark/tools/memory`, `spark/tools/tavily-search`
+- Binaries: platform-specific — resolved in **Step 0** below
 
-All memory operations use the compiled `spark/tools/memory` binary.
+All memory operations use the compiled memory binary resolved in Step 0.
 Run all commands from the **project root**.
 
 ---
 
 ## Behavior
 
+### Step 0 — Detect platform and resolve binary paths
+
+Run the following command to identify the current OS:
+
+```bash
+uname -s 2>/dev/null || echo "Windows"
+```
+
+Based on the output, set `MEMORY` and `TAVILY` to the correct binary paths:
+
+| `uname -s` output | `MEMORY` | `TAVILY` |
+|---|---|---|
+| `Linux` | `./spark/tools/memory-linux-x64` | `./spark/tools/tavily-search-linux-x64` |
+| `Darwin` | `./spark/tools/memory-macos-arm64` | `./spark/tools/tavily-search-macos-arm64` |
+| `Windows` or error | `./spark/tools/memory-win-x64.exe` | `./spark/tools/tavily-search-win-x64.exe` |
+
+Use `$MEMORY` and `$TAVILY` as the binary paths in **all subsequent steps**.
+
+---
+
 ### Step 1 — Load profile
 
 Run:
 
 ```bash
-./spark/tools/memory loadProfile
+$MEMORY loadProfile
 ```
 
 If the output is `null`, run **onboarding** (Step 2).
@@ -56,7 +76,7 @@ Ask the user these questions **one at a time**, waiting for each answer:
 After collecting answers, save the profile by running the command below with the collected values inlined:
 
 ```bash
-./spark/tools/memory saveProfile '{"stack":"<stack>","preferred_types":["<type1>","<type2>"],"time_per_project":"<time>","marketplaces":["<marketplace>"],"target_niche":"<niche>","updated_at":"<ISO date>"}'
+$MEMORY saveProfile '{"stack":"<stack>","preferred_types":["<type1>","<type2>"],"time_per_project":"<time>","marketplaces":["<marketplace>"],"target_niche":"<niche>","updated_at":"<ISO date>"}'
 ```
 
 Then proceed to Step 3.
@@ -68,7 +88,7 @@ Then proceed to Step 3.
 Run:
 
 ```bash
-./spark/tools/memory loadIdeas
+$MEMORY loadIdeas
 ```
 
 Note existing idea titles and discarded titles so you do not repeat them.
@@ -107,7 +127,7 @@ Handle the response:
 - **Discard** → run the command below for each title to discard, then ask again.
 
   ```bash
-  ./spark/tools/memory discardIdea '<title>'
+  $MEMORY discardIdea '<title>'
   ```
 
 - **Exit** → close gracefully.
@@ -128,7 +148,7 @@ Generate **3 personalized utility ideas** based on:
 **Check for duplicates** before finalising each idea. Run an FTS5 search across saved ideas:
 
 ```bash
-./spark/tools/memory searchIdeas '<keyword>'
+$MEMORY searchIdeas '<keyword>'
 ```
 
 If the search returns matching ideas, adjust the concept to avoid overlap.
@@ -137,7 +157,7 @@ For each idea, research competition and market data using the bundled Tavily sea
 Make sure `TAVILY_API_KEY` is set in your environment, then run:
 
 ```bash
-./spark/tools/tavily-search "<query>"
+$TAVILY "<query>"
 ```
 
 Run one query per idea (e.g. `"gumroad cli tools for developers"`). The script prints a JSON array of
@@ -182,13 +202,13 @@ Handle the response:
 To **save** an idea, run:
 
 ```bash
-./spark/tools/memory saveIdea '{"title":"<title>","type":"<cli|tui|gui|agent>","description":"<one-sentence description>","effort":"<S|M|L>","sales_feasibility":"<Low|Medium|High>","saved_at":"<ISO date>"}'
+$MEMORY saveIdea '{"title":"<title>","type":"<cli|tui|gui|agent>","description":"<one-sentence description>","effort":"<S|M|L>","sales_feasibility":"<Low|Medium|High>","saved_at":"<ISO date>"}'
 ```
 
 To **discard** an idea, run:
 
 ```bash
-./spark/tools/memory discardIdea '<title>'
+$MEMORY discardIdea '<title>'
 ```
 
 Run one command per idea saved or discarded.

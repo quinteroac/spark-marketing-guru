@@ -47,6 +47,9 @@ Thumbs.db
 .cache/
 coverage-report/
 
+# Compiled binaries
+spark/tools/
+
 # Optional: lockfiles you may want to keep (uncomment to ignore)
 # package-lock.json
 # yarn.lock

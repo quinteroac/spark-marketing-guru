@@ -37,7 +37,7 @@ npx skills add ./spark-marketing-guru
 
 | Requirement | Details |
 |-------------|---------|
-| Platform | Linux x64 (pre-compiled binaries) |
+| Platform | Linux x64, macOS arm64, Windows x64 (pre-compiled binaries) |
 | Tavily API key | Set `TAVILY_API_KEY` in your environment for web research during idea generation |
 | SQLite | Bundled — no separate install needed |
 
@@ -57,7 +57,18 @@ Binaries in `spark/tools/` are compiled from `src/` using Bun:
 
 ```bash
 bun install
-bun run build
+
+# Linux x64
+bun build --compile --target=bun-linux-x64   src/memory.js        --outfile spark/tools/memory-linux-x64
+bun build --compile --target=bun-linux-x64   src/tavily-search.js --outfile spark/tools/tavily-search-linux-x64
+
+# macOS arm64
+bun build --compile --target=bun-darwin-arm64 src/memory.js        --outfile spark/tools/memory-macos-arm64
+bun build --compile --target=bun-darwin-arm64 src/tavily-search.js --outfile spark/tools/tavily-search-macos-arm64
+
+# Windows x64
+bun build --compile --target=bun-windows-x64 src/memory.js        --outfile spark/tools/memory-win-x64.exe
+bun build --compile --target=bun-windows-x64 src/tavily-search.js --outfile spark/tools/tavily-search-win-x64.exe
 ```
 
 Requires [Bun](https://bun.sh) ≥ 1.0.
@@ -70,8 +81,12 @@ spark-marketing-guru/
 │   ├── SKILL.md          # Skill definition (agent instructions)
 │   ├── memory.db         # Runtime SQLite DB (created on first use)
 │   └── tools/
-│       ├── memory        # Compiled binary: profile + ideas CRUD + FTS5 search
-│       └── tavily-search # Compiled binary: Tavily web search wrapper
+│       ├── memory-linux-x64          # Linux x64
+│       ├── memory-macos-arm64        # macOS Apple Silicon
+│       ├── memory-win-x64.exe        # Windows x64
+│       ├── tavily-search-linux-x64   # Linux x64
+│       ├── tavily-search-macos-arm64 # macOS Apple Silicon
+│       └── tavily-search-win-x64.exe # Windows x64
 ├── src/
 │   ├── memory.js         # Source for memory binary
 │   └── tavily-search.js  # Source for tavily-search binary
