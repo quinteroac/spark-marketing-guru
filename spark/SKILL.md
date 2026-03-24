@@ -29,74 +29,29 @@ Step 0 auto-detects the tools location (project root or `~/.claude/skills/spark/
 
 ## Behavior
 
-### Step 0 — Verify Bun runtime and set script paths
+### Step 0 — Bootstrap
 
-Spark runs its tools via **Bun**. Check if it is installed:
-
-```bash
-bun --version 2>/dev/null && echo "OK" || echo "MISSING"
-```
-
-**If `MISSING`**, first detect the OS:
+Run:
 
 ```bash
-uname -s 2>/dev/null || echo "Windows"
+bun --version 2>/dev/null && echo OK || echo MISSING
 ```
 
-Then ask the user for explicit authorization before installing, showing the platform-specific command:
+**If `MISSING`**: Bun is required. Show the install command for the user's OS and stop — do not proceed.
 
-**Linux / macOS:**
-> Spark requires **Bun** as its runtime, but it is not currently installed.
-> May I install it now? This will run: `curl -fsSL https://bun.sh/install | bash`
-> Reply **yes** to install or **no** to cancel.
-
-**Windows:**
-> Spark requires **Bun** as its runtime, but it is not currently installed.
-> May I install it now? This will run: `powershell -c "irm bun.sh/install.ps1 | iex"`
-> Reply **yes** to install or **no** to cancel.
-
-- If the user says **no** → close the skill gracefully.
-- If the user says **yes** → run the appropriate command:
-
-**Linux / macOS:**
-```bash
-curl -fsSL https://bun.sh/install | bash
-```
-
-**Windows (PowerShell):**
-```powershell
-powershell -c "irm bun.sh/install.ps1 | iex"
-```
-
-Then verify the installation succeeded:
+**If `OK`**, locate the tools:
 
 ```bash
-bun --version 2>/dev/null && echo "OK" || echo "FAILED"
-```
-
-If `FAILED`: inform the user that the installation failed and suggest installing manually from **https://bun.sh**. Stop the skill.
-
-**Once Bun is confirmed available**, run the following command exactly as written to locate the tools:
-
-```bash
-for d in \
-  "spark/tools" \
-  "$HOME/.claude/skills/spark/tools" \
-  "$HOME/.agents/skills/spark/tools"; do
-  if [ -f "$d/memory.js" ]; then SKILL_TOOLS="$d"; break; fi
+for d in "spark/tools" "$HOME/.claude/skills/spark/tools" "$HOME/.agents/skills/spark/tools"; do
+  [ -f "$d/memory.js" ] && echo "$d" && break
 done
-echo "${SKILL_TOOLS:-NOT_FOUND}"
 ```
 
-- If the output is `NOT_FOUND`, stop and tell the user: _"Spark tools could not be located. Make sure `spark/tools/` is present in the project root or that the skill is properly installed."_
-- Otherwise, set:
+If nothing is printed: tell the user the Spark tools could not be found and stop.
 
-```bash
-MEMORY="bun $SKILL_TOOLS/memory.js"
-TAVILY="bun $SKILL_TOOLS/tavily-search.js"
-```
-
-Use `$MEMORY` and `$TAVILY` as the command prefixes in **all subsequent steps**.
+Otherwise set:
+- `MEMORY` = `bun <output>/memory.js`
+- `TAVILY` = `bun <output>/tavily-search.js`
 
 ---
 
