@@ -47,11 +47,11 @@ If the output is a JSON object, skip to Step 3.
 
 Ask the user these questions **one at a time**, waiting for each answer:
 
-1. ¿Cuál es tu stack principal? (lenguajes, frameworks, entornos que dominas)
-2. ¿Qué tipo de utilidades prefieres construir? (CLI, TUI, GUI de escritorio, agent tools, o cualquier combinación)
-3. ¿Cuánto tiempo puedes dedicarle a cada proyecto? (ej. un fin de semana, 1–2 semanas, un mes)
-4. ¿En qué marketplaces quieres vender? (ej. Gumroad, Lemon Squeezy, Itch.io, propio sitio)
-5. ¿Tienes algún nicho o audiencia objetivo? (ej. devs, diseñadores, sysadmins, creadores de contenido — o "ninguno")
+1. What's your primary stack? (languages, frameworks, environments you master)
+2. What types of utilities do you prefer to build? (CLI, TUI, desktop GUI, agent tools, or any combination)
+3. How much time can you dedicate to each project? (e.g. a weekend, 1–2 weeks, one month)
+4. Which marketplaces do you want to sell on? (e.g. Gumroad, Lemon Squeezy, Itch.io, your own site)
+5. Do you have a target niche or audience? (e.g. devs, designers, sysadmins, content creators — or "none")
 
 After collecting answers, save the profile by running the command below with the collected values inlined:
 
@@ -123,14 +123,14 @@ Present all 3 ideas to the user.
 
 Ask the user:
 
-> ¿Cuál(es) ideas quieres guardar? ¿Alguna descartar? Puedes responder con los números (ej. "guarda 1 y 3, descarta 2") o pedir nuevas ideas.
+> Which idea(s) do you want to save? Any to discard? You can reply with numbers (e.g. "save 1 and 3, discard 2") or ask for new ideas.
 
 Handle the response:
 
-- **Guardar**: save via Step 6
-- **Descartar**: discard via Step 6
-- **Nuevas ideas**: go back to Step 4 and generate 3 more (different) ideas
-- **Ninguna / salir**: close gracefully
+- **Save**: save via Step 6
+- **Discard**: discard via Step 6
+- **New ideas**: go back to Step 4 and generate 3 more (different) ideas
+- **None / exit**: close gracefully
 
 ---
 
@@ -152,7 +152,7 @@ Run one command per idea saved or discarded.
 
 Confirm to the user:
 
-> Ideas guardadas. Corre `/spark` cuando quieras más sugerencias — el agente recordará lo que ya exploraste.
+> Ideas saved. Run `/spark` whenever you want more suggestions — the agent will remember what you've already explored.
 
 ---
 
