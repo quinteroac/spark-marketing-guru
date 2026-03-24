@@ -30,7 +30,7 @@ Run all commands from the **project root**.
 
 ## Behavior
 
-### Step 0 — Detect platform and resolve binary paths
+### Step 0 — Detect platform, resolve binary paths, and download if missing
 
 Run the following command to identify the current OS:
 
@@ -45,6 +45,49 @@ Based on the output, set `MEMORY` and `TAVILY` to the correct binary paths:
 | `Linux` | `./spark/tools/memory-linux-x64` | `./spark/tools/tavily-search-linux-x64` |
 | `Darwin` | `./spark/tools/memory-macos-arm64` | `./spark/tools/tavily-search-macos-arm64` |
 | `Windows` or error | `./spark/tools/memory-win-x64.exe` | `./spark/tools/tavily-search-win-x64.exe` |
+
+**Check if the binaries exist.** Run:
+
+```bash
+[ -f "$MEMORY" ] && [ -f "$TAVILY" ] && echo "OK" || echo "MISSING"
+```
+
+If the output is `MISSING`, download the binaries from the latest GitHub release.
+
+Set the base URL for downloads:
+
+```
+RELEASE_BASE=https://github.com/quinteroac/spark-marketing-guru/releases/latest/download
+```
+
+Then download the two missing files. Use `curl -fsSL -o` for Linux/macOS or `Invoke-WebRequest` for Windows:
+
+**Linux / macOS:**
+```bash
+mkdir -p spark/tools
+curl -fsSL -o "$MEMORY"  "$RELEASE_BASE/$(basename $MEMORY)"
+curl -fsSL -o "$TAVILY" "$RELEASE_BASE/$(basename $TAVILY)"
+chmod +x "$MEMORY" "$TAVILY"
+```
+
+**Windows (PowerShell):**
+```powershell
+New-Item -ItemType Directory -Force -Path spark\tools | Out-Null
+Invoke-WebRequest "$RELEASE_BASE/memory-win-x64.exe"        -OutFile "$MEMORY"
+Invoke-WebRequest "$RELEASE_BASE/tavily-search-win-x64.exe" -OutFile "$TAVILY"
+```
+
+After downloading, verify the files exist and are non-zero:
+
+```bash
+[ -s "$MEMORY" ] && [ -s "$TAVILY" ] && echo "OK" || echo "DOWNLOAD FAILED"
+```
+
+If the output is still `DOWNLOAD FAILED`, inform the user:
+
+> The Spark tools could not be downloaded automatically. Please run `npm run build:linux` (Linux), `npm run build:macos` (macOS), or `npm run build:windows` (Windows) from the project root to compile them locally.
+
+Then stop the skill.
 
 Use `$MEMORY` and `$TAVILY` as the binary paths in **all subsequent steps**.
 
