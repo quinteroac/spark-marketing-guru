@@ -1,20 +1,13 @@
 {
-  "name": "marketing-guru",
+  "name": "spark-marketing-guru",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npm run build:linux",
-    "build:linux": "node -e \"require('fs').mkdirSync('spark/tools', {recursive:true})\" && bun build --compile --target=bun-linux-x64 src/memory.js --outfile spark/tools/memory-linux-x64 && bun build --compile --target=bun-linux-x64 src/tavily-search.js --outfile spark/tools/tavily-search-linux-x64",
-    "build:macos": "node -e \"require('fs').mkdirSync('spark/tools', {recursive:true})\" && bun build --compile --target=bun-darwin-arm64 src/memory.js --outfile spark/tools/memory-macos-arm64 && bun build --compile --target=bun-darwin-arm64 src/tavily-search.js --outfile spark/tools/tavily-search-macos-arm64",
-    "build:windows": "node -e \"require('fs').mkdirSync('spark/tools', {recursive:true})\" && bun build --compile --target=bun-windows-x64 src/memory.js --outfile spark/tools/memory-win-x64.exe && bun build --compile --target=bun-windows-x64 src/tavily-search.js --outfile spark/tools/tavily-search-win-x64.exe",
-    "build:all": "npm run build:linux && npm run build:macos && npm run build:windows"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
-  "dependencies": {
-    "better-sqlite3": "^12.8.0"
-  }
+  "dependencies": {}
 }

@@ -37,9 +37,9 @@ npx skills add ./spark-marketing-guru
 
 | Requirement | Details |
 |-------------|---------|
-| Platform | Linux x64, macOS arm64, Windows x64 (pre-compiled binaries) |
+| [Bun](https://bun.sh) ≥ 1.0 | Required runtime — the skill will offer to install it automatically if missing |
 | Tavily API key | Set `TAVILY_API_KEY` in your environment for web research during idea generation |
-| SQLite | Bundled — no separate install needed |
+| SQLite | Bundled via `bun:sqlite` — no separate install needed |
 
 ## Usage
 
@@ -51,27 +51,14 @@ Once installed, trigger the skill from any agent session:
 
 On first run, Spark will ask 5 onboarding questions to build your profile (stack, preferred formats, time budget, marketplaces, target niche). Subsequent runs skip onboarding and go straight to idea generation.
 
-## Building from Source
+## Running from Source
 
-Binaries in `spark/tools/` are compiled from `src/` using Bun:
+The tools run directly with Bun — no compilation step needed:
 
 ```bash
-bun install
-
-# Linux x64
-bun build --compile --target=bun-linux-x64   src/memory.js        --outfile spark/tools/memory-linux-x64
-bun build --compile --target=bun-linux-x64   src/tavily-search.js --outfile spark/tools/tavily-search-linux-x64
-
-# macOS arm64
-bun build --compile --target=bun-darwin-arm64 src/memory.js        --outfile spark/tools/memory-macos-arm64
-bun build --compile --target=bun-darwin-arm64 src/tavily-search.js --outfile spark/tools/tavily-search-macos-arm64
-
-# Windows x64
-bun build --compile --target=bun-windows-x64 src/memory.js        --outfile spark/tools/memory-win-x64.exe
-bun build --compile --target=bun-windows-x64 src/tavily-search.js --outfile spark/tools/tavily-search-win-x64.exe
+bun spark/tools/memory.js loadProfile
+bun spark/tools/tavily-search.js "your query"
 ```
-
-Requires [Bun](https://bun.sh) ≥ 1.0.
 
 ## Project Structure
 
@@ -81,15 +68,8 @@ spark-marketing-guru/
 │   ├── SKILL.md          # Skill definition (agent instructions)
 │   ├── memory.db         # Runtime SQLite DB (created on first use)
 │   └── tools/
-│       ├── memory-linux-x64          # Linux x64
-│       ├── memory-macos-arm64        # macOS Apple Silicon
-│       ├── memory-win-x64.exe        # Windows x64
-│       ├── tavily-search-linux-x64   # Linux x64
-│       ├── tavily-search-macos-arm64 # macOS Apple Silicon
-│       └── tavily-search-win-x64.exe # Windows x64
-├── src/
-│   ├── memory.js         # Source for memory binary
-│   └── tavily-search.js  # Source for tavily-search binary
+│       ├── memory.js         # SQLite memory layer (profile, ideas, FTS5 search)
+│       └── tavily-search.js  # Tavily API wrapper
 └── assets/
     └── icon.svg
 ```
