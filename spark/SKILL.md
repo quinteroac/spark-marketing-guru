@@ -75,7 +75,49 @@ Note existing idea titles and discarded titles so you do not repeat them.
 
 ---
 
-### Step 4 — Generate ideas
+### Step 4 — Saved-ideas checkpoint
+
+Using the `loadIdeas` output from Step 3, count the entries in the `ideas` array.
+
+- **If the `ideas` array is empty**, skip this step and proceed directly to Step 5.
+- **If the `ideas` array is non-empty**, ask the user:
+
+  > "You have X saved idea(s). Would you like to review them or generate new ones?"
+  > _(replace X with the actual count)_
+
+**If the user chooses "review":**
+
+Display every saved idea using the card format below:
+
+```
+### [N]. [Title]
+**Type:** CLI / TUI / GUI / Agent tool
+**Description:** …
+**Effort:** S / M / L
+**Sales feasibility:** Low / Medium / High
+```
+
+After displaying all saved ideas, ask:
+
+> "Would you like to generate new ideas, discard any of these, or exit?"
+
+Handle the response:
+- **Generate new ideas** → proceed to Step 5.
+- **Discard** → run the command below for each title to discard, then ask again.
+
+  ```bash
+  ./spark/tools/memory discardIdea '<title>'
+  ```
+
+- **Exit** → close gracefully.
+
+**If the user chooses "new ideas":**
+
+Proceed directly to Step 5.
+
+---
+
+### Step 5 — Generate ideas
 
 Generate **3 personalized utility ideas** based on:
 - The user's profile (stack, preferred types, time budget, niche)
@@ -119,7 +161,7 @@ Present all 3 ideas to the user.
 
 ---
 
-### Step 5 — Collect feedback
+### Step 6 — Collect feedback
 
 Ask the user:
 
@@ -127,14 +169,14 @@ Ask the user:
 
 Handle the response:
 
-- **Save**: save via Step 6
-- **Discard**: discard via Step 6
-- **New ideas**: go back to Step 4 and generate 3 more (different) ideas
+- **Save**: save via Step 7
+- **Discard**: discard via Step 7
+- **New ideas**: go back to Step 5 and generate 3 more (different) ideas
 - **None / exit**: close gracefully
 
 ---
 
-### Step 6 — Update ideas log
+### Step 7 — Update ideas log
 
 To **save** an idea, run:
 
@@ -160,6 +202,6 @@ Confirm to the user:
 
 - Always respond in the same language the user is using.
 - Never repeat an idea that is already in the ideas log or discarded list (check Step 3 output).
-- Use `searchIdeas` in Step 4 to catch semantic duplicates even when titles differ.
+- Use `searchIdeas` in Step 5 to catch semantic duplicates even when titles differ.
 - If the Tavily search returns no useful results for a niche, note it explicitly in "Market research" — a thin market is valuable signal.
 - Keep responses scannable — use headers and short paragraphs, not walls of text.
