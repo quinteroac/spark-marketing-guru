@@ -23,7 +23,7 @@ Use this skill when the user runs `/spark` or asks for utility ideas to sell on 
 - Database: `spark/memory.db` (created automatically on first run — no setup needed)
 - Scripts: `spark/tools/memory.js` and `spark/tools/tavily-search.js` (run via Bun — see Step 0)
 
-Step 0 auto-detects the tools location (project root or `~/.claude/skills/spark/`).
+Run `/spark` from the project root where `spark/tools/` lives.
 
 ---
 
@@ -39,19 +39,17 @@ bun --version 2>/dev/null && echo OK || echo MISSING
 
 **If `MISSING`**: Bun is required. Show the install command for the user's OS and stop — do not proceed.
 
-**If `OK`**, locate the tools:
+**If `OK`**, verify the tools are present:
 
 ```bash
-for d in "spark/tools" "$HOME/.claude/skills/spark/tools" "$HOME/.agents/skills/spark/tools"; do
-  [ -f "$d/memory.js" ] && echo "$d" && break
-done
+[ -f spark/tools/memory.js ] && echo OK || echo NOT_FOUND
 ```
 
-If nothing is printed: tell the user the Spark tools could not be found and stop.
+If `NOT_FOUND`: tell the user to run the skill from the project root where `spark/tools/` lives and stop.
 
 Otherwise set:
-- `MEMORY` = `bun <output>/memory.js`
-- `TAVILY` = `bun <output>/tavily-search.js`
+- `MEMORY` = `bun spark/tools/memory.js`
+- `TAVILY` = `bun spark/tools/tavily-search.js`
 
 ---
 
