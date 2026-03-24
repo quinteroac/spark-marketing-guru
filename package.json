@@ -1,0 +1,16 @@
+{
+  "name": "marketing-guru",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "mkdir -p spark/tools && bun build --compile --target=bun-linux-x64 src/memory.js --outfile spark/tools/memory && bun build --compile --target=bun-linux-x64 src/tavily-search.js --outfile spark/tools/tavily-search"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "better-sqlite3": "^12.8.0"
+  }
+}
