@@ -23,7 +23,7 @@ Use this skill when the user runs `/spark` or asks for utility ideas to sell on 
 - Database: `spark/memory.db` (created automatically on first run — no setup needed)
 - Scripts: `spark/tools/memory.js` and `spark/tools/tavily-search.js` (run via Bun — see Step 0)
 
-Run all commands from the **project root**.
+Step 0 auto-detects the tools location (project root or `~/.claude/skills/spark/`).
 
 ---
 
@@ -76,12 +76,31 @@ bun --version 2>/dev/null && echo "OK" || echo "FAILED"
 
 If `FAILED`: inform the user that the installation failed and suggest installing manually from **https://bun.sh**. Stop the skill.
 
-**Once Bun is confirmed available**, set the script paths:
+**Once Bun is confirmed available**, detect where the tools are located and set the script paths.
 
+Check these locations in order and use the first that contains `memory.js`:
+
+1. `spark/tools/` — relative to the current working directory (project root)
+2. `~/.claude/skills/spark/tools/` — Claude Code global install
+3. `~/.agents/skills/spark/tools/` — generic agent install
+4. Any other directory the current agent framework uses for skills/tools
+
+If none of the above match, fall back to a filesystem search:
+
+```bash
+find "$HOME" -name "memory.js" -path "*/spark/tools/*" 2>/dev/null | head -1
 ```
-MEMORY="bun spark/tools/memory.js"
-TAVILY="bun spark/tools/tavily-search.js"
+
+Use the directory containing the found file as `SKILL_TOOLS`. Then set:
+
+```bash
+MEMORY="bun $SKILL_TOOLS/memory.js"
+TAVILY="bun $SKILL_TOOLS/tavily-search.js"
 ```
+
+If `memory.js` cannot be found anywhere, stop and tell the user:
+
+> Spark tools (`spark/tools/memory.js`) could not be located. Make sure the `spark/tools/` folder is present in the project root or that the skill is properly installed.
 
 Use `$MEMORY` and `$TAVILY` as the command prefixes in **all subsequent steps**.
 
