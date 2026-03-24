@@ -99,10 +99,11 @@ Display every saved idea using the card format below:
 
 After displaying all saved ideas, ask:
 
-> "Would you like to generate new ideas, discard any of these, or exit?"
+> "Would you like to generate new ideas, scaffold one of these, discard any of these, or exit?"
 
 Handle the response:
 - **Generate new ideas** → proceed to Step 5.
+- **Scaffold** → ask the user which idea they want to scaffold (by number or title). Once selected, treat that idea as the "saved idea" and enter **Step 8** for it. After Step 8 completes, return here and ask again.
 - **Discard** → run the command below for each title to discard, then ask again.
 
   ```bash
@@ -192,9 +193,79 @@ To **discard** an idea, run:
 
 Run one command per idea saved or discarded.
 
-Confirm to the user:
+Then proceed to **Step 8** for each idea that was saved (not discarded).
+
+---
+
+### Step 8 — Scaffold project folder (optional)
+
+For **each saved idea** (in the order they were saved), ask the user:
+
+> "Would you like to scaffold a project folder for '[idea title]'?"
+
+**If the user says no (or skips):**
+Move on to the next saved idea (if any). After processing all saved ideas, end the flow with:
 
 > Ideas saved. Run `/spark` whenever you want more suggestions — the agent will remember what you've already explored.
+
+**If the user says yes:**
+
+1. Generate **5 product name options** in `kebab-case` based on the idea's `title` and `description`. Names should be concise, marketable, and memorable. Present them as a numbered list:
+
+   ```
+   1. smart-cli-tool
+   2. dev-util-kit
+   3. quick-devops
+   4. toolbox-pro
+   5. code-helper
+   ```
+
+2. Ask:
+
+   > "Pick a number (1–5) or type a custom name:"
+
+3. If the user types a custom name, convert it to `kebab-case`: lowercase, spaces → hyphens, strip all characters that are not alphanumeric or hyphens.
+
+4. Check whether a folder with that name already exists in the current working directory:
+
+   ```bash
+   [ -d "<chosen-name>" ] && echo "EXISTS" || echo "OK"
+   ```
+
+   - If `EXISTS`: warn the user — _"A folder named `<chosen-name>` already exists. Please pick a different name."_ — then go back to step 2.
+   - If `OK`: continue.
+
+5. Create the folder and write the `README.md`:
+
+   ```bash
+   mkdir <chosen-name>
+   ```
+
+   Write `<chosen-name>/README.md` with this exact structure (fill in the idea's values):
+
+   ```markdown
+   # <Chosen Name (title-cased, hyphens → spaces)>
+
+   <idea description — one sentence>
+
+   ---
+
+   **Type:** <CLI / TUI / GUI / Agent tool>
+   **Effort:** <S / M / L>
+   **Sales feasibility:** <Low / Medium / High>
+   ```
+
+6. Confirm to the user:
+
+   > ✅ Project folder `<chosen-name>/` created with `README.md`.
+
+7. Move on to the next saved idea (if any). After all saved ideas are processed, end the flow with:
+
+   > Ideas saved. Run `/spark` whenever you want more suggestions — the agent will remember what you've already explored.
+
+**If no ideas were saved** (only discards occurred in Step 7), skip Step 8 entirely and confirm:
+
+> Ideas updated. Run `/spark` whenever you want more suggestions — the agent will remember what you've already explored.
 
 ---
 
